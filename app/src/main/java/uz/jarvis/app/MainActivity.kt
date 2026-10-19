@@ -82,13 +82,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun refreshStatus() {
-        val active = Prefs.activeProviders(this)
-        statusText.text = if (active.isEmpty()) {
-            "Kalit yo'q — Sozlamalardan qo'shing"
+        val brains = Prefs.brains(this)
+        statusText.text = if (brains.isEmpty()) {
+            "Miya yo'q — Sozlamalardan qo'shing"
         } else {
-            val names = active.joinToString(", ") { Prefs.label(it).substringBefore(" (") }
+            val names = brains.joinToString(", ") { it.displayName() }
             val lessons = Memory.lessonCount(this)
-            "Miyalar: $names  •  o'rgangan qoidalar: $lessons"
+            "Miyalar (${brains.size}): $names  •  o'rgangan qoidalar: $lessons"
         }
     }
 
@@ -114,7 +114,7 @@ class MainActivity : AppCompatActivity() {
 
             val senderLabel = buildString {
                 append("Jarvis")
-                val ok = council.raw.filter { it.ok }.map { Prefs.label(it.provider).substringBefore(" (") }
+                val ok = council.raw.filter { it.ok }.map { it.brainName }
                 if (ok.isNotEmpty()) append("  (").append(ok.joinToString(" + ")).append(")")
             }
             adapter.update(thinkingIdx, council.finalAnswer, senderLabel)

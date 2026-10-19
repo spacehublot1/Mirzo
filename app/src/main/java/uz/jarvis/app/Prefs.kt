@@ -1,56 +1,90 @@
 package uz.jarvis.app
 
 import android.content.Context
+import org.json.JSONArray
+import org.json.JSONObject
+import java.util.UUID
 
 /**
- * Telefonda saqlanadigan sozlamalar: har bir AI provayderining API kaliti,
- * "bosh miya" (javoblarni sintez qiluvchi) tanlovi va ovoz sozlamasi.
+ * "Miyalar" ro'yxati va sozlamalar. Har bir miya = provayder turi + kalit +
+ * ixtiyoriy model + nom. Bir turdan bir nechta kalit (miya) qo'shsa bo'ladi.
  * Kalitlar faqat shu telefonda, ilovaning shaxsiy xotirasida saqlanadi.
  */
 object Prefs {
     private const val NAME = "jarvis_prefs"
-
-    const val OPENAI = "openai"
-    const val GEMINI = "gemini"
-    const val DEEPSEEK = "deepseek"
+    private const val KEY_BRAINS = "brains"
+    private const val KEY_AGG = "aggregator_id"
+    private const val KEY_VOICE = "voice_reply"
 
     private fun p(ctx: Context) = ctx.getSharedPreferences(NAME, Context.MODE_PRIVATE)
 
-    fun getKey(ctx: Context, provider: String): String =
-        p(ctx).getString("key_$provider", "")?.trim() ?: ""
-
-    fun setKey(ctx: Context, provider: String, value: String) {
-        p(ctx).edit().putString("key_$provider", value.trim()).apply()
+    data class Brain(
+        val id: String,
+        val type: String,     // Providers.Type.id
+        val label: String,    // foydalanuvchi bergan nom (masalan "ChatGPT-1")
+        val key: String,
+        val model: String     // bo'sh bo'lsa provayderning standart modeli
+    ) {
+        fun modelOrDefault(): String = model.ifBlank { Providers.byId(type).defaultModel }
+        fun displayName(): String = label.ifBlank { Providers.byId(type).label }
     }
 
-    /** Kaliti kiritilgan (yoqilgan) provayderlar ro'yxati. */
-    fun activeProviders(ctx: Context): List<String> =
-        listOf(OPENAI, GEMINI, DEEPSEEK).filter { getKey(ctx, it).isNotBlank() }
-
-    /** Javoblarni birlashtiruvchi "bosh miya". Standart: OpenAI (bo'lmasa birinchi mavjud). */
-    fun getAggregator(ctx: Context): String {
-        val saved = p(ctx).getString("aggregator", "") ?: ""
-        val active = activeProviders(ctx)
-        return when {
-            saved.isNotBlank() && getKey(ctx, saved).isNotBlank() -> saved
-            active.isNotEmpty() -> active.first()
-            else -> OPENAI
+    fun brains(ctx: Context): List<Brain> {
+        val arr = JSONArray(p(ctx).getString(KEY_BRAINS, "[]"))
+        val list = mutableListOf<Brain>()
+        for (i in 0 until arr.length()) {
+            val o = arr.getJSONObject(i)
+            list.add(
+                Brain(
+                    id = o.optString("id"),
+                    type = o.optString("type"),
+                    label = o.optString("label"),
+                    key = o.optString("key"),
+                    model = o.optString("model")
+                )
+            )
         }
+        return list.filter { it.key.isNotBlank() }
     }
 
-    fun setAggregator(ctx: Context, provider: String) {
-        p(ctx).edit().putString("aggregator", provider).apply()
+    private fun save(ctx: Context, list: List<Brain>) {
+        val arr = JSONArray()
+        list.forEach {
+            arr.put(
+                JSONObject()
+                    .put("id", it.id)
+                    .put("type", it.type)
+                    .put("label", it.label)
+                    .put("key", it.key)
+                    .put("model", it.model)
+            )
+        }
+        p(ctx).edit().putString(KEY_BRAINS, arr.toString()).apply()
     }
 
-    fun isVoiceReply(ctx: Context): Boolean = p(ctx).getBoolean("voice_reply", true)
-    fun setVoiceReply(ctx: Context, on: Boolean) { p(ctx).edit().putBoolean("voice_reply", on).apply() }
-
-    fun isConfigured(ctx: Context): Boolean = activeProviders(ctx).isNotEmpty()
-
-    fun label(provider: String): String = when (provider) {
-        OPENAI -> "ChatGPT (OpenAI)"
-        GEMINI -> "Gemini (Google)"
-        DEEPSEEK -> "DeepSeek"
-        else -> provider
+    fun addBrain(ctx: Context, type: String, label: String, key: String, model: String) {
+        val list = brains(ctx).toMutableList()
+        list.add(Brain(UUID.randomUUID().toString(), type, label.trim(), key.trim(), model.trim()))
+        save(ctx, list)
     }
+
+    fun removeBrain(ctx: Context, id: String) {
+        save(ctx, brains(ctx).filterNot { it.id == id })
+    }
+
+    fun getAggregator(ctx: Context): Brain? {
+        val list = brains(ctx)
+        if (list.isEmpty()) return null
+        val saved = p(ctx).getString(KEY_AGG, "") ?: ""
+        return list.firstOrNull { it.id == saved } ?: list.first()
+    }
+
+    fun setAggregator(ctx: Context, id: String) {
+        p(ctx).edit().putString(KEY_AGG, id).apply()
+    }
+
+    fun isVoiceReply(ctx: Context): Boolean = p(ctx).getBoolean(KEY_VOICE, true)
+    fun setVoiceReply(ctx: Context, on: Boolean) { p(ctx).edit().putBoolean(KEY_VOICE, on).apply() }
+
+    fun isConfigured(ctx: Context): Boolean = brains(ctx).isNotEmpty()
 }

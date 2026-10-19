@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:background="@color/bg">
+
+    <TextView style="@style/JLabel" android:layout_marginTop="0dp" android:text="Provayder" />
+    <Spinner android:id="@+id/typeSpinner"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" android:background="@color/panel" android:padding="8dp" />
+
+    <TextView style="@style/JLabel" android:text="Nom (ixtiyoriy, masalan ChatGPT-1)" />
+    <EditText android:id="@+id/labelInput" style="@style/JInput" android:hint="Nom" />
+
+    <TextView style="@style/JLabel" android:text="API kalit" />
+    <EditText android:id="@+id/keyInput" style="@style/JInput" android:hint="kalit" />
+
+    <TextView style="@style/JLabel" android:text="Model (ixtiyoriy — bo'sh bo'lsa standart)" />
+    <EditText android:id="@+id/modelInput" style="@style/JInput" android:hint="masalan gpt-4o" />
+</LinearLayout>
