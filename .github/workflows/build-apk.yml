@@ -6,12 +6,28 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: '17' }
       - run: chmod +x ./gradlew
-      - run: ./gradlew assembleDebug --no-daemon
+      - name: Build
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug --no-daemon --stacktrace 2>&1 | tee build.log
+      - name: Xatoni repoga yozish
+        if: failure()
+        run: |
+          git config user.name ci
+          git config user.email ci@ci
+          grep -iE "e: |error:|FAILED|Caused by|Apostrophe|AAPT|Unresolved|> Task|What went wrong|Compilation" build.log | tail -c 60000 > ci_error.log || tail -c 60000 build.log > ci_error.log
+          git checkout --orphan ci-logs
+          git rm -rf --cached . >/dev/null 2>&1 || true
+          git add -f ci_error.log
+          git commit -m "ci error log"
+          git push origin HEAD:ci-logs --force
       - uses: actions/upload-artifact@v4
         with:
           name: jarvis-app-debug
