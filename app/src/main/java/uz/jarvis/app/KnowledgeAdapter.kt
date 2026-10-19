@@ -31,10 +31,10 @@ class KnowledgeAdapter(
     override fun getItemCount() = items.size
 
     override fun onBindViewHolder(holder: VH, position: Int) {
-        val it = items[position]
-        holder.text.text = it.text
-        holder.source.text = "${it.source} • ${fmt.format(Date(it.ts))}"
-        holder.delete.setOnClickListener { onDelete(it) }
+        val item = items[position]
+        holder.text.text = item.text
+        holder.source.text = "${item.source} • ${fmt.format(Date(item.ts))}"
+        holder.delete.setOnClickListener { onDelete(item) }
     }
 
     fun setItems(list: List<Knowledge.Item>) {
