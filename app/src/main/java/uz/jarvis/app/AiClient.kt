@@ -31,6 +31,24 @@ object AiClient {
     data class AiAnswer(val brainName: String, val text: String, val ok: Boolean, val error: String? = null)
     data class Council(val finalAnswer: String, val raw: List<AiAnswer>, val lesson: String)
 
+    private data class Raw(val code: Int, val body: String)
+
+    /** So'rovni yuboradi; 429/503 (limit/band) bo'lsa biroz kutib qayta uradi. */
+    private fun send(req: Request, maxRetries: Int = 2): Raw {
+        var attempt = 0
+        while (true) {
+            http.newCall(req).execute().use { resp ->
+                val body = resp.body?.string() ?: ""
+                if ((resp.code == 429 || resp.code == 503) && attempt < maxRetries) {
+                    attempt++
+                    try { Thread.sleep(if (attempt == 1) 3000L else 7000L) } catch (_: InterruptedException) {}
+                    return@use  // qayta urinamiz
+                }
+                return Raw(resp.code, body)
+            }
+        }
+    }
+
     private fun callBrain(brain: Prefs.Brain, system: String, user: String): AiAnswer {
         val type = Providers.byId(brain.type)
         return try {
@@ -56,31 +74,40 @@ object AiClient {
             .post(body.toRequestBody(JSON))
             .build()
 
-        http.newCall(req).execute().use { resp ->
-            val text = resp.body?.string() ?: ""
-            if (!resp.isSuccessful) return AiAnswer(brain.displayName(), "", false, "HTTP ${resp.code}: ${briefErr(text)}")
-            val content = JSONObject(text).getJSONArray("choices").getJSONObject(0)
-                .getJSONObject("message").getString("content")
-            return AiAnswer(brain.displayName(), content.trim(), true)
-        }
+        val raw = send(req)
+        if (raw.code !in 200..299) return AiAnswer(brain.displayName(), "", false, "HTTP ${raw.code}: ${briefErr(raw.body)}")
+        val content = JSONObject(raw.body).getJSONArray("choices").getJSONObject(0)
+            .getJSONObject("message").getString("content")
+        return AiAnswer(brain.displayName(), content.trim(), true)
     }
 
     private fun geminiCall(brain: Prefs.Brain, system: String, user: String): AiAnswer {
-        val url = "${Providers.byId("gemini").baseUrl}/${brain.modelOrDefault()}:generateContent?key=${brain.key}"
-        val parts = JSONArray().put(JSONObject().put("text", user))
-        val contents = JSONArray().put(JSONObject().put("role", "user").put("parts", parts))
-        val body = JSONObject().put("contents", contents)
-        if (system.isNotBlank()) {
-            body.put("systemInstruction", JSONObject().put("parts", JSONArray().put(JSONObject().put("text", system))))
+        // Avval tanlangan model; agar 429 (limit) bo'lsa — yengilroq flash-lite'ga o'tamiz
+        val models = buildList {
+            add(brain.modelOrDefault())
+            if (!brain.modelOrDefault().contains("lite")) add("gemini-3.5-flash-lite")
+        }.distinct()
+
+        var lastErr = "noma'lum"
+        for (model in models) {
+            val url = "${Providers.byId("gemini").baseUrl}/$model:generateContent?key=${brain.key}"
+            val parts = JSONArray().put(JSONObject().put("text", user))
+            val contents = JSONArray().put(JSONObject().put("role", "user").put("parts", parts))
+            val body = JSONObject().put("contents", contents)
+            if (system.isNotBlank()) {
+                body.put("systemInstruction", JSONObject().put("parts", JSONArray().put(JSONObject().put("text", system))))
+            }
+            val req = Request.Builder().url(url).post(body.toString().toRequestBody(JSON)).build()
+            val raw = send(req)
+            if (raw.code in 200..299) {
+                val out = JSONObject(raw.body).getJSONArray("candidates").getJSONObject(0)
+                    .getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text")
+                return AiAnswer(brain.displayName(), out.trim(), true)
+            }
+            lastErr = "HTTP ${raw.code}: ${briefErr(raw.body)}"
+            if (raw.code != 429 && raw.code != 503) break   // boshqa xato bo'lsa — qayta urinmaymiz
         }
-        val req = Request.Builder().url(url).post(body.toString().toRequestBody(JSON)).build()
-        http.newCall(req).execute().use { resp ->
-            val text = resp.body?.string() ?: ""
-            if (!resp.isSuccessful) return AiAnswer(brain.displayName(), "", false, "HTTP ${resp.code}: ${briefErr(text)}")
-            val out = JSONObject(text).getJSONArray("candidates").getJSONObject(0)
-                .getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text")
-            return AiAnswer(brain.displayName(), out.trim(), true)
-        }
+        return AiAnswer(brain.displayName(), "", false, lastErr)
     }
 
     private fun claudeCall(brain: Prefs.Brain, system: String, user: String): AiAnswer {
@@ -98,12 +125,10 @@ object AiClient {
             .post(body.toString().toRequestBody(JSON))
             .build()
 
-        http.newCall(req).execute().use { resp ->
-            val text = resp.body?.string() ?: ""
-            if (!resp.isSuccessful) return AiAnswer(brain.displayName(), "", false, "HTTP ${resp.code}: ${briefErr(text)}")
-            val out = JSONObject(text).getJSONArray("content").getJSONObject(0).getString("text")
-            return AiAnswer(brain.displayName(), out.trim(), true)
-        }
+        val raw = send(req)
+        if (raw.code !in 200..299) return AiAnswer(brain.displayName(), "", false, "HTTP ${raw.code}: ${briefErr(raw.body)}")
+        val out = JSONObject(raw.body).getJSONArray("content").getJSONObject(0).getString("text")
+        return AiAnswer(brain.displayName(), out.trim(), true)
     }
 
     private fun briefErr(body: String): String = try {
