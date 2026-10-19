@@ -90,5 +90,9 @@ object Prefs {
     fun getSpeechRate(ctx: Context): Float = p(ctx).getFloat("speech_rate", 1.0f)
     fun setSpeechRate(ctx: Context, r: Float) { p(ctx).edit().putFloat("speech_rate", r).apply() }
 
+    // Internetdan foydalanish (Gemini Google-qidiruv grounding)
+    fun isWebEnabled(ctx: Context): Boolean = p(ctx).getBoolean("web_enabled", true)
+    fun setWebEnabled(ctx: Context, on: Boolean) { p(ctx).edit().putBoolean("web_enabled", on).apply() }
+
     fun isConfigured(ctx: Context): Boolean = brains(ctx).isNotEmpty()
 }

@@ -34,6 +34,7 @@ class SettingsActivity : AppCompatActivity() {
 
         aggregatorSpinner = findViewById(R.id.aggregatorSpinner)
         findViewById<CheckBox>(R.id.voiceReply).isChecked = Prefs.isVoiceReply(this)
+        findViewById<CheckBox>(R.id.webEnabled).isChecked = Prefs.isWebEnabled(this)
 
         // Gapirish tezligi: SeekBar 0..30 -> 0.5x..2.0x
         val rateBar = findViewById<android.widget.SeekBar>(R.id.speechRate)
@@ -55,6 +56,7 @@ class SettingsActivity : AppCompatActivity() {
             val pos = aggregatorSpinner.selectedItemPosition
             if (pos in aggregatorIds.indices) Prefs.setAggregator(this, aggregatorIds[pos])
             Prefs.setVoiceReply(this, findViewById<CheckBox>(R.id.voiceReply).isChecked)
+            Prefs.setWebEnabled(this, findViewById<CheckBox>(R.id.webEnabled).isChecked)
             val rb = findViewById<android.widget.SeekBar>(R.id.speechRate)
             Prefs.setSpeechRate(this, (0.5f + rb.progress / 20f))
             if (!Prefs.isConfigured(this)) {

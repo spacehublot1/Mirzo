@@ -37,8 +37,12 @@
         android:layout_marginTop="4dp" android:background="@color/panel" android:padding="8dp" />
 
     <CheckBox
+        android:id="@+id/webEnabled" style="@style/JRadio"
+        android:layout_marginTop="12dp" android:text="Internetdan foydalansin (Gemini web-qidiruv)" />
+
+    <CheckBox
         android:id="@+id/voiceReply" style="@style/JRadio"
-        android:layout_marginTop="12dp" android:text="Javobni ovoz bilan o\'qib bersin (TTS)" />
+        android:layout_marginTop="4dp" android:text="Javobni ovoz bilan o\'qib bersin (TTS)" />
 
     <TextView
         android:id="@+id/rateLabel"

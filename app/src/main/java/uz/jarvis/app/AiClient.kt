@@ -49,11 +49,11 @@ object AiClient {
         }
     }
 
-    private fun callBrain(brain: Prefs.Brain, system: String, user: String): AiAnswer {
+    private fun callBrain(brain: Prefs.Brain, system: String, user: String, web: Boolean = false): AiAnswer {
         val type = Providers.byId(brain.type)
         return try {
             when (type.style) {
-                Providers.Style.GEMINI -> geminiCall(brain, system, user)
+                Providers.Style.GEMINI -> geminiCall(brain, system, user, web)
                 Providers.Style.CLAUDE -> claudeCall(brain, system, user)
                 Providers.Style.OPENAI -> openAiCompatCall(brain, type.baseUrl, system, user)
             }
@@ -81,7 +81,7 @@ object AiClient {
         return AiAnswer(brain.displayName(), content.trim(), true)
     }
 
-    private fun geminiCall(brain: Prefs.Brain, system: String, user: String): AiAnswer {
+    private fun geminiCall(brain: Prefs.Brain, system: String, user: String, web: Boolean): AiAnswer {
         // Avval tanlangan model; agar 429 (limit) bo'lsa — yengilroq flash-lite'ga o'tamiz
         val models = buildList {
             add(brain.modelOrDefault())
@@ -97,12 +97,21 @@ object AiClient {
             if (system.isNotBlank()) {
                 body.put("systemInstruction", JSONObject().put("parts", JSONArray().put(JSONObject().put("text", system))))
             }
+            // Internetdan foydalanish: Google-qidiruv grounding
+            if (web) {
+                body.put("tools", JSONArray().put(JSONObject().put("google_search", JSONObject())))
+            }
             val req = Request.Builder().url(url).post(body.toString().toRequestBody(JSON)).build()
             val raw = send(req)
             if (raw.code in 200..299) {
-                val out = JSONObject(raw.body).getJSONArray("candidates").getJSONObject(0)
-                    .getJSONObject("content").getJSONArray("parts").getJSONObject(0).getString("text")
-                return AiAnswer(brain.displayName(), out.trim(), true)
+                val partsArr = JSONObject(raw.body).getJSONArray("candidates").getJSONObject(0)
+                    .getJSONObject("content").getJSONArray("parts")
+                val sb = StringBuilder()
+                for (i in 0 until partsArr.length()) {
+                    val t = partsArr.getJSONObject(i).optString("text")
+                    if (t.isNotBlank()) sb.append(t)
+                }
+                return AiAnswer(brain.displayName(), sb.toString().trim(), true)
             }
             lastErr = "HTTP ${raw.code}: ${briefErr(raw.body)}"
             if (raw.code != 429 && raw.code != 503) break   // boshqa xato bo'lsa — qayta urinmaymiz
@@ -157,9 +166,10 @@ object AiClient {
             if (memory.isNotBlank()) append("\n\nXotira (foydalanuvchi haqida va o'rgangan narsalaring):\n").append(memory)
         }
 
+        val web = Prefs.isWebEnabled(ctx)
         // 1) Parallel so'rov — har bir miya (bir xil provayderning turli kalitlari ham)
         val answers = withContext(Dispatchers.IO) {
-            brains.map { b -> async { callBrain(b, baseSystem, userPrompt) } }.awaitAll()
+            brains.map { b -> async { callBrain(b, baseSystem, userPrompt, web) } }.awaitAll()
         }
 
         val good = answers.filter { it.ok && it.text.isNotBlank() }
