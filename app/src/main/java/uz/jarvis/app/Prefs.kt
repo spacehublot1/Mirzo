@@ -94,5 +94,12 @@ object Prefs {
     fun isWebEnabled(ctx: Context): Boolean = p(ctx).getBoolean("web_enabled", true)
     fun setWebEnabled(ctx: Context, on: Boolean) { p(ctx).edit().putBoolean("web_enabled", on).apply() }
 
+    // Bulut server (xotira/bilimni saqlash uchun)
+    fun getServerUrl(ctx: Context): String = p(ctx).getString("server_url", "")?.trim() ?: ""
+    fun getServerToken(ctx: Context): String = p(ctx).getString("server_token", "")?.trim() ?: ""
+    fun setServer(ctx: Context, url: String, token: String) {
+        p(ctx).edit().putString("server_url", url.trim().trimEnd('/')).putString("server_token", token.trim()).apply()
+    }
+
     fun isConfigured(ctx: Context): Boolean = brains(ctx).isNotEmpty()
 }

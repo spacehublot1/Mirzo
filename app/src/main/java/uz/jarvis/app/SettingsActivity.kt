@@ -11,8 +11,10 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.coroutines.launch
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -50,6 +52,24 @@ class SettingsActivity : AppCompatActivity() {
             override fun onStopTrackingTouch(sb: android.widget.SeekBar?) {}
         })
 
+        // Bulut server
+        val serverUrl = findViewById<EditText>(R.id.serverUrl)
+        val serverToken = findViewById<EditText>(R.id.serverToken)
+        serverUrl.setText(Prefs.getServerUrl(this))
+        serverToken.setText(Prefs.getServerToken(this))
+        findViewById<Button>(R.id.syncButton).setOnClickListener {
+            Prefs.setServer(this, serverUrl.text.toString(), serverToken.text.toString())
+            if (!Cloud.isConfigured(this)) {
+                Toast.makeText(this, "Avval server manzilini kiriting", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "Sinxronlanmoqda...", Toast.LENGTH_SHORT).show()
+                lifecycleScope.launch {
+                    val res = Cloud.sync(this@SettingsActivity)
+                    Toast.makeText(this@SettingsActivity, res.message, Toast.LENGTH_LONG).show()
+                }
+            }
+        }
+
         findViewById<Button>(R.id.addBrainButton).setOnClickListener { showAddDialog() }
 
         findViewById<Button>(R.id.saveButton).setOnClickListener {
@@ -59,6 +79,7 @@ class SettingsActivity : AppCompatActivity() {
             Prefs.setWebEnabled(this, findViewById<CheckBox>(R.id.webEnabled).isChecked)
             val rb = findViewById<android.widget.SeekBar>(R.id.speechRate)
             Prefs.setSpeechRate(this, (0.5f + rb.progress / 20f))
+            Prefs.setServer(this, serverUrl.text.toString(), serverToken.text.toString())
             if (!Prefs.isConfigured(this)) {
                 Toast.makeText(this, "Kamida bitta miya qo'shing", Toast.LENGTH_LONG).show()
             } else {

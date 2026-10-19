@@ -147,6 +147,11 @@ class MainActivity : AppCompatActivity() {
             Memory.addTurn(this@MainActivity, q, council.finalAnswer)
             if (council.lesson.isNotBlank()) Memory.addLesson(this@MainActivity, council.lesson)
 
+            // Bulutga sinxronlash (fon, sozlangan bo'lsa)
+            if (Cloud.isConfigured(this@MainActivity)) {
+                lifecycleScope.launch { runCatching { Cloud.sync(this@MainActivity) } }
+            }
+
             if (Prefs.isVoiceReply(this@MainActivity) && ttsReady) speak(council.finalAnswer)
 
             busy = false

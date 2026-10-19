@@ -53,6 +53,16 @@ object Knowledge {
 
     fun remove(ctx: Context, id: String) = save(ctx, all(ctx).filterNot { it.id == id })
 
+    /** Serverdan kelgan elementni id bo'yicha (takrorlamay) qo'shadi. */
+    fun addRemote(ctx: Context, id: String, text: String, source: String, ts: Long) {
+        if (id.isBlank() || text.isBlank()) return
+        val list = all(ctx)
+        if (list.any { it.id == id }) return
+        val m = list.toMutableList()
+        m.add(Item(id, text, source.ifBlank { "bulut" }, if (ts > 0) ts else System.currentTimeMillis()))
+        save(ctx, m.take(MAX_ITEMS))
+    }
+
     fun count(ctx: Context): Int = all(ctx).size
 
     /** Savolga eng mos bilimlarni tanlab, prompt uchun matn qaytaradi. */

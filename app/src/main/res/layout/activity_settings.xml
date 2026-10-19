@@ -54,6 +54,25 @@
         android:layout_width="match_parent" android:layout_height="wrap_content"
         android:max="30" android:progress="10" />
 
+    <TextView
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="18dp" android:text="Bulut server (ixtiyoriy)"
+        android:textColor="@color/accent" android:textSize="16sp" android:textStyle="bold" />
+    <TextView
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Xotira/bilim telefonda to\'lmasligi uchun o\'z serveringizga sinxronlang."
+        android:textColor="@color/muted" android:textSize="13sp" />
+    <EditText android:id="@+id/serverUrl" style="@style/JInput"
+        android:hint="Server manzili (http://192.168.x.x:8090 yoki ngrok)" />
+    <EditText android:id="@+id/serverToken" style="@style/JInput"
+        android:hint="JARVIS_TOKEN (parol)" />
+    <Button
+        android:id="@+id/syncButton"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:text="Hozir sinxronlash"
+        android:textColor="@color/accent" android:backgroundTint="@color/panel" />
+
     <Button
         android:id="@+id/saveButton"
         android:layout_width="match_parent" android:layout_height="wrap_content"
