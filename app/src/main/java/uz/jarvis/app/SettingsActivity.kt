@@ -7,6 +7,7 @@ import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
 import android.widget.Spinner
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -34,12 +35,28 @@ class SettingsActivity : AppCompatActivity() {
         aggregatorSpinner = findViewById(R.id.aggregatorSpinner)
         findViewById<CheckBox>(R.id.voiceReply).isChecked = Prefs.isVoiceReply(this)
 
+        // Gapirish tezligi: SeekBar 0..30 -> 0.5x..2.0x
+        val rateBar = findViewById<android.widget.SeekBar>(R.id.speechRate)
+        val rateLabel = findViewById<TextView>(R.id.rateLabel)
+        fun rateFromProgress(p: Int) = 0.5f + p / 20f   // 0->0.5, 10->1.0, 30->2.0
+        rateBar.progress = ((Prefs.getSpeechRate(this) - 0.5f) * 20f).toInt().coerceIn(0, 30)
+        rateLabel.text = "Gapirish tezligi: ${"%.1f".format(rateFromProgress(rateBar.progress))}x"
+        rateBar.setOnSeekBarChangeListener(object : android.widget.SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(sb: android.widget.SeekBar?, p: Int, fromUser: Boolean) {
+                rateLabel.text = "Gapirish tezligi: ${"%.1f".format(rateFromProgress(p))}x"
+            }
+            override fun onStartTrackingTouch(sb: android.widget.SeekBar?) {}
+            override fun onStopTrackingTouch(sb: android.widget.SeekBar?) {}
+        })
+
         findViewById<Button>(R.id.addBrainButton).setOnClickListener { showAddDialog() }
 
         findViewById<Button>(R.id.saveButton).setOnClickListener {
             val pos = aggregatorSpinner.selectedItemPosition
             if (pos in aggregatorIds.indices) Prefs.setAggregator(this, aggregatorIds[pos])
             Prefs.setVoiceReply(this, findViewById<CheckBox>(R.id.voiceReply).isChecked)
+            val rb = findViewById<android.widget.SeekBar>(R.id.speechRate)
+            Prefs.setSpeechRate(this, (0.5f + rb.progress / 20f))
             if (!Prefs.isConfigured(this)) {
                 Toast.makeText(this, "Kamida bitta miya qo'shing", Toast.LENGTH_LONG).show()
             } else {

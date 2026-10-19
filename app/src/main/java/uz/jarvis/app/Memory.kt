@@ -70,6 +70,16 @@ object Memory {
 
     fun lessonCount(ctx: Context): Int = JSONArray(p(ctx).getString(KEY_LESSONS, "[]")).length()
 
+    /** O'rgangan qoidalar ro'yxati (eng yangisi birinchi) — "o'sish"ni ko'rsatish uchun. */
+    fun lessonsList(ctx: Context): List<String> {
+        val arr = JSONArray(p(ctx).getString(KEY_LESSONS, "[]"))
+        val list = mutableListOf<String>()
+        for (i in arr.length() - 1 downTo 0) list.add(arr.getString(i))
+        return list
+    }
+
+    fun turnCount(ctx: Context): Int = JSONArray(p(ctx).getString(KEY_TURNS, "[]")).length()
+
     /** Javob berishdan oldin bosh miyaga beriladigan to'liq xotira konteksti. */
     fun buildContext(ctx: Context): String {
         val sb = StringBuilder()

@@ -40,6 +40,16 @@
         android:id="@+id/voiceReply" style="@style/JRadio"
         android:layout_marginTop="12dp" android:text="Javobni ovoz bilan o\'qib bersin (TTS)" />
 
+    <TextView
+        android:id="@+id/rateLabel"
+        android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:text="Gapirish tezligi: 1.0x"
+        android:textColor="@color/muted" android:textSize="13sp" />
+    <SeekBar
+        android:id="@+id/speechRate"
+        android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:max="30" android:progress="10" />
+
     <Button
         android:id="@+id/saveButton"
         android:layout_width="match_parent" android:layout_height="wrap_content"

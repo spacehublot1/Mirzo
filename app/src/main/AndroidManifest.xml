@@ -31,5 +31,10 @@
             android:name=".TeachActivity"
             android:exported="false"
             android:label="O\'qitish" />
+
+        <activity
+            android:name=".BrainActivity"
+            android:exported="false"
+            android:label="Jarvis miyasi" />
     </application>
 </manifest>

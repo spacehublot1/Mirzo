@@ -35,12 +35,12 @@ class ChatAdapter(private val items: MutableList<ChatMessage>) :
         if (m.fromUser) {
             holder.root.gravity = Gravity.END
             bubbleParams.gravity = Gravity.END
-            holder.bubble.setBackgroundColor(ContextCompat.getColor(ctx, R.color.bubble_user))
+            holder.bubble.setBackgroundResource(R.drawable.bubble_user_bg)
             holder.sender.visibility = View.GONE
         } else {
             holder.root.gravity = Gravity.START
             bubbleParams.gravity = Gravity.START
-            holder.bubble.setBackgroundColor(ContextCompat.getColor(ctx, R.color.bubble_ai))
+            holder.bubble.setBackgroundResource(R.drawable.bubble_ai_bg)
             holder.sender.visibility = if (m.sender.isBlank()) View.GONE else View.VISIBLE
             holder.sender.text = m.sender
         }

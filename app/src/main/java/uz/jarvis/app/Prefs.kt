@@ -86,5 +86,9 @@ object Prefs {
     fun isVoiceReply(ctx: Context): Boolean = p(ctx).getBoolean(KEY_VOICE, true)
     fun setVoiceReply(ctx: Context, on: Boolean) { p(ctx).edit().putBoolean(KEY_VOICE, on).apply() }
 
+    // TTS gapirish tezligi (0.5x - 2.0x), standart 1.0
+    fun getSpeechRate(ctx: Context): Float = p(ctx).getFloat("speech_rate", 1.0f)
+    fun setSpeechRate(ctx: Context, r: Float) { p(ctx).edit().putFloat("speech_rate", r).apply() }
+
     fun isConfigured(ctx: Context): Boolean = brains(ctx).isNotEmpty()
 }

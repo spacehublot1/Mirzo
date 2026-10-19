@@ -5,6 +5,8 @@ import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.RecognizerIntent
 import android.speech.tts.TextToSpeech
 import android.view.Menu
@@ -34,6 +36,9 @@ class MainActivity : AppCompatActivity() {
     private var tts: TextToSpeech? = null
     private var ttsReady = false
     private var busy = false
+
+    private val thinkHandler = Handler(Looper.getMainLooper())
+    private var thinkRunnable: Runnable? = null
 
     private val sttLauncher = registerForActivityResult(
         androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult()
@@ -67,6 +72,7 @@ class MainActivity : AppCompatActivity() {
 
         tts = TextToSpeech(this) { status ->
             ttsReady = status == TextToSpeech.SUCCESS
+            if (ttsReady) applyTtsLanguage()
         }
 
         if (!Prefs.isConfigured(this)) {
@@ -103,11 +109,22 @@ class MainActivity : AppCompatActivity() {
         hideKeyboard()
         input.setText("")
         adapter.add(ChatMessage(q, fromUser = true))
-        val thinkingIdx = adapter.add(ChatMessage("Miyalar o'ylayapti...", fromUser = false, sender = "Jarvis"))
+        val thinkingIdx = adapter.add(ChatMessage("Jarvis o'ylayapti", fromUser = false, sender = "Jarvis"))
         scrollDown()
 
         busy = true
-        statusText.text = "Miyalar o'ylayapti..."
+        statusText.text = "Jarvis o'ylayapti..."
+        // "o'ylayapti" nuqtalari animatsiyasi
+        var dots = 0
+        val r = object : Runnable {
+            override fun run() {
+                dots = (dots + 1) % 4
+                adapter.update(thinkingIdx, "Jarvis o'ylayapti" + ".".repeat(dots), "Jarvis")
+                thinkHandler.postDelayed(this, 450)
+            }
+        }
+        thinkRunnable = r
+        thinkHandler.postDelayed(r, 450)
 
         lifecycleScope.launch {
             // Xotira (suhbat + o'rganilgan qoidalar) + savolga mos bilim bazasi
@@ -119,12 +136,11 @@ class MainActivity : AppCompatActivity() {
             }.trim()
             val council = AiClient.council(this@MainActivity, q, memory)
 
-            val senderLabel = buildString {
-                append("Jarvis")
-                val ok = council.raw.filter { it.ok }.map { it.brainName }
-                if (ok.isNotEmpty()) append("  (").append(ok.joinToString(" + ")).append(")")
-            }
-            adapter.update(thinkingIdx, council.finalAnswer, senderLabel)
+            // animatsiyani to'xtatamiz
+            thinkRunnable?.let { thinkHandler.removeCallbacks(it) }
+            thinkRunnable = null
+            // Hammasi bitta "Jarvis" — miyalarni alohida ko'rsatmaymiz
+            adapter.update(thinkingIdx, council.finalAnswer, "Jarvis")
             scrollDown()
 
             // Xotira: suhbat + o'rganilgan saboq
@@ -164,9 +180,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     // ---------------- Javobni o'qish (TTS) ----------------
+    /** Eng mos ovoz tilini tanlaydi: o'zbek bo'lmasa rus, u ham bo'lmasa ingliz. */
+    private fun applyTtsLanguage() {
+        val engine = tts ?: return
+        val candidates = listOf(Locale("uz"), Locale("ru"), Locale.getDefault(), Locale.ENGLISH)
+        for (loc in candidates) {
+            val res = engine.setLanguage(loc)
+            if (res != TextToSpeech.LANG_MISSING_DATA && res != TextToSpeech.LANG_NOT_SUPPORTED) break
+        }
+    }
+
     private fun speak(text: String) {
-        tts?.language = Locale.getDefault()
-        tts?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "jarvis")
+        val engine = tts ?: return
+        engine.setSpeechRate(Prefs.getSpeechRate(this))
+        engine.speak(text, TextToSpeech.QUEUE_FLUSH, null, "jarvis")
     }
 
     // ---------------- yordamchi ----------------
@@ -186,6 +213,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_brain -> { startActivity(Intent(this, BrainActivity::class.java)); return true }
             R.id.action_teach -> { startActivity(Intent(this, TeachActivity::class.java)); return true }
             R.id.action_settings -> { startActivity(Intent(this, SettingsActivity::class.java)); return true }
             R.id.action_clear -> {
@@ -199,6 +227,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onDestroy() {
+        thinkHandler.removeCallbacksAndMessages(null)
         tts?.stop(); tts?.shutdown()
         super.onDestroy()
     }

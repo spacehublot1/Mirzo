@@ -25,7 +25,7 @@ object Providers {
 
     val ALL: List<Type> = listOf(
         Type("openai", "ChatGPT (OpenAI)", "https://api.openai.com/v1/chat/completions", "gpt-4o", Style.OPENAI, "sk-..."),
-        Type("gemini", "Gemini (Google)", "https://generativelanguage.googleapis.com/v1beta/models", "gemini-3.5-flash-lite", Style.GEMINI, "AIza..."),
+        Type("gemini", "Gemini (Google)", "https://generativelanguage.googleapis.com/v1beta/models", "gemini-3.6-flash", Style.GEMINI, "AIza..."),
         Type("deepseek", "DeepSeek", "https://api.deepseek.com/chat/completions", "deepseek-chat", Style.OPENAI, "sk-..."),
         Type("claude", "Claude (Anthropic)", "https://api.anthropic.com/v1/messages", "claude-3-5-sonnet-latest", Style.CLAUDE, "sk-ant-..."),
         Type("groq", "Groq", "https://api.groq.com/openai/v1/chat/completions", "llama-3.3-70b-versatile", Style.OPENAI, "gsk_..."),

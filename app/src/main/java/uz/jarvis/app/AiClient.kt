@@ -122,9 +122,14 @@ object AiClient {
         }
 
         val baseSystem = buildString {
-            append("Sen 'Jarvis' nomli yordamchining miyalaridan birisan. ")
-            append("Foydalanuvchiga u yozgan tilda (asosan o'zbekcha) aniq va foydali javob ber.")
-            if (memory.isNotBlank()) append("\n\nXotira (foydalanuvchi haqida va o'rganilgan qoidalar):\n").append(memory)
+            append("Sen 'Jarvis' — aqlli, bilimdon va ishonchli shaxsiy yordamchisan. ")
+            append("Qoidalar:\n")
+            append("1) Foydalanuvchi yozgan tilda javob ber (asosan o'zbekcha, u rus/ingliz yozsa — o'sha tilda).\n")
+            append("2) Javobing aniq, to'liq va foydali bo'lsin. Savolni diqqat bilan o'qib, mohiyatiga javob ber.\n")
+            append("3) Kerak bo'lsa bosqichma-bosqich tushuntir, misol keltir. Bilmasang — taxmin qilma, bilmasligingni ayt.\n")
+            append("4) Qisqa savolga qisqa, murakkab savolga batafsil javob ber. Ortiqcha so'z ishlatma.\n")
+            append("5) Xotirangdagi ma'lumotlardan foydalan, lekin faqat tegishli bo'lsa.")
+            if (memory.isNotBlank()) append("\n\nXotira (foydalanuvchi haqida va o'rgangan narsalaring):\n").append(memory)
         }
 
         // 1) Parallel so'rov — har bir miya (bir xil provayderning turli kalitlari ham)

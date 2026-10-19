@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/bg" android:fillViewport="true">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="vertical" android:padding="20dp">
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="Jarvis miyasi" android:textColor="@color/accent"
+            android:textSize="22sp" android:textStyle="bold" />
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Jarvis vaqt o\'tgani sari o\'rganib boradi. Quyida uning hozirgi o\'sishi."
+            android:textColor="@color/muted" android:textSize="13sp" />
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginTop="16dp" android:weightSum="2">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:background="@drawable/card_bg" android:padding="14dp" android:layout_marginEnd="6dp">
+                <TextView android:id="@+id/statBrains" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="@color/accent" android:textSize="26sp" android:textStyle="bold" android:text="0" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Miyalar" android:textColor="@color/muted" android:textSize="12sp" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:background="@drawable/card_bg" android:padding="14dp" android:layout_marginStart="6dp">
+                <TextView android:id="@+id/statTurns" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="@color/accent" android:textSize="26sp" android:textStyle="bold" android:text="0" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Suhbatlar" android:textColor="@color/muted" android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:orientation="horizontal" android:layout_marginTop="12dp" android:weightSum="2">
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:background="@drawable/card_bg" android:padding="14dp" android:layout_marginEnd="6dp">
+                <TextView android:id="@+id/statLessons" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="@color/accent" android:textSize="26sp" android:textStyle="bold" android:text="0" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="O\'rgangan qoidalar" android:textColor="@color/muted" android:textSize="12sp" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1"
+                android:orientation="vertical" android:background="@drawable/card_bg" android:padding="14dp" android:layout_marginStart="6dp">
+                <TextView android:id="@+id/statKnowledge" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:textColor="@color/accent" android:textSize="26sp" android:textStyle="bold" android:text="0" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Bilim bazasi" android:textColor="@color/muted" android:textSize="12sp" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="22dp" android:text="So\'nggi o\'rgangan qoidalar"
+            android:textColor="@color/ink" android:textSize="16sp" android:textStyle="bold" />
+        <TextView android:id="@+id/lessonsText" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:background="@drawable/card_bg" android:padding="14dp"
+            android:textColor="@color/ink" android:textSize="13sp" android:lineSpacingExtra="3dp"
+            android:text="Hali yo\'q" />
+
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginTop="18dp" android:text="Bilim bazasi (o\'rgatganlaring)"
+            android:textColor="@color/ink" android:textSize="16sp" android:textStyle="bold" />
+        <TextView android:id="@+id/knowledgeText" android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:layout_marginTop="6dp" android:layout_marginBottom="20dp" android:background="@drawable/card_bg" android:padding="14dp"
+            android:textColor="@color/ink" android:textSize="13sp" android:lineSpacingExtra="3dp"
+            android:text="Hali yo\'q" />
+    </LinearLayout>
+</ScrollView>
