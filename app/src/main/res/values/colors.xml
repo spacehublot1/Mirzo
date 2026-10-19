@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="bg">#0A0E17</color>
+    <color name="panel">#141A28</color>
+    <color name="bubble_user">#1E3A5F</color>
+    <color name="bubble_ai">#182235</color>
+    <color name="accent">#38BDF8</color>
+    <color name="ink">#E6EDF6</color>
+    <color name="muted">#8A97A8</color>
+</resources>

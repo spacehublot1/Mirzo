@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bg"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="API kalitlari"
+            android:textColor="@color/accent"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Har bir AI'ning kalitini kiriting. Kamida bittasi kerak. Kalitlar faqat shu telefonda saqlanadi."
+            android:textColor="@color/muted"
+            android:textSize="13sp" />
+
+        <!-- OpenAI -->
+        <TextView style="@style/JLabel" android:text="ChatGPT (OpenAI) — platform.openai.com" />
+        <EditText
+            android:id="@+id/keyOpenai"
+            style="@style/JInput"
+            android:hint="sk-..." />
+
+        <!-- Gemini -->
+        <TextView style="@style/JLabel" android:text="Gemini (Google) — aistudio.google.com" />
+        <EditText
+            android:id="@+id/keyGemini"
+            style="@style/JInput"
+            android:hint="AIza..." />
+
+        <!-- DeepSeek -->
+        <TextView style="@style/JLabel" android:text="DeepSeek — platform.deepseek.com" />
+        <EditText
+            android:id="@+id/keyDeepseek"
+            style="@style/JInput"
+            android:hint="sk-..." />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Bosh miya (javoblarni birlashtiradi)"
+            android:textColor="@color/accent"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="Hamma AI javob bergach, qaysi biri ularni ko'rib yagona eng yaxshi javobni tuzsin?"
+            android:textColor="@color/muted"
+            android:textSize="13sp" />
+
+        <RadioGroup
+            android:id="@+id/aggregatorGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp">
+            <RadioButton android:id="@+id/aggOpenai" style="@style/JRadio" android:text="ChatGPT (OpenAI)" />
+            <RadioButton android:id="@+id/aggGemini" style="@style/JRadio" android:text="Gemini (Google)" />
+            <RadioButton android:id="@+id/aggDeepseek" style="@style/JRadio" android:text="DeepSeek" />
+        </RadioGroup>
+
+        <CheckBox
+            android:id="@+id/voiceReply"
+            style="@style/JRadio"
+            android:layout_marginTop="16dp"
+            android:text="Javobni ovoz bilan o'qib bersin (TTS)" />
+
+        <Button
+            android:id="@+id/saveButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="28dp"
+            android:text="Saqlash"
+            android:textColor="@color/bg"
+            android:backgroundTint="@color/accent" />
+
+    </LinearLayout>
+</ScrollView>
