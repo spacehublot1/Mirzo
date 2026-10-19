@@ -30,6 +30,6 @@
         <activity
             android:name=".TeachActivity"
             android:exported="false"
-            android:label="O'qitish" />
+            android:label="O\'qitish" />
     </application>
 </manifest>

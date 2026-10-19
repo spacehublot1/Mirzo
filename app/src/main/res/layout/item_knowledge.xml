@@ -12,5 +12,5 @@
     </LinearLayout>
     <ImageButton android:id="@+id/kDelete" android:layout_width="40dp" android:layout_height="40dp"
         android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_delete" android:contentDescription="O'chirish" />
+        android:src="@drawable/ic_delete" android:contentDescription="O\'chirish" />
 </LinearLayout>

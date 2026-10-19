@@ -17,6 +17,6 @@
     <TextView style="@style/JLabel" android:text="API kalit" />
     <EditText android:id="@+id/keyInput" style="@style/JInput" android:hint="kalit" />
 
-    <TextView style="@style/JLabel" android:text="Model (ixtiyoriy — bo'sh bo'lsa standart)" />
+    <TextView style="@style/JLabel" android:text="Model (ixtiyoriy — bo\'sh bo\'lsa standart)" />
     <EditText android:id="@+id/modelInput" style="@style/JInput" android:hint="masalan gpt-4o" />
 </LinearLayout>

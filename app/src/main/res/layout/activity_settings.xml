@@ -13,7 +13,7 @@
     <TextView
         android:layout_width="match_parent" android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="Istalgancha AI kaliti qo'shing. Bir provayderdan bir nechta kalit ham bo'ladi — har biri alohida miya."
+        android:text="Istalgancha AI kaliti qo\'shing. Bir provayderdan bir nechta kalit ham bo\'ladi — har biri alohida miya."
         android:textColor="@color/muted" android:textSize="13sp" />
 
     <androidx.recyclerview.widget.RecyclerView
@@ -24,7 +24,7 @@
     <Button
         android:id="@+id/addBrainButton"
         android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:text="+ Miya qo'shish"
+        android:text="+ Miya qo\'shish"
         android:textColor="@color/accent" android:backgroundTint="@color/panel" />
 
     <TextView
@@ -38,7 +38,7 @@
 
     <CheckBox
         android:id="@+id/voiceReply" style="@style/JRadio"
-        android:layout_marginTop="12dp" android:text="Javobni ovoz bilan o'qib bersin (TTS)" />
+        android:layout_marginTop="12dp" android:text="Javobni ovoz bilan o\'qib bersin (TTS)" />
 
     <Button
         android:id="@+id/saveButton"
