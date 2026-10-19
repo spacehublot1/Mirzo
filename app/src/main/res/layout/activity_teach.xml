@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:background="@color/bg" android:orientation="vertical" android:padding="20dp">
+
+    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:text="O'qitish" android:textColor="@color/accent" android:textSize="22sp" android:textStyle="bold" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Jarvis'ga ma'lumot, fakt yoki tuzatish bering. U buni eslab qoladi va javob berishda ishlatadi."
+        android:textColor="@color/muted" android:textSize="13sp" />
+
+    <EditText android:id="@+id/teachInput" android:layout_width="match_parent" android:layout_height="140dp"
+        android:layout_marginTop="12dp" android:background="@color/panel" android:padding="12dp"
+        android:gravity="top|start" android:hint="Masalan: Mening ismim Mirzo. Men BlackArch'da ishlayman..."
+        android:textColor="@color/ink" android:textColorHint="@color/muted"
+        android:inputType="textMultiLine|textCapSentences" android:textSize="14sp" />
+
+    <EditText android:id="@+id/sourceInput" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="8dp" android:background="@color/panel" android:padding="12dp"
+        android:hint="Manba (ixtiyoriy, masalan 'shaxsiy' yoki hujjat nomi)"
+        android:textColor="@color/ink" android:textColorHint="@color/muted"
+        android:inputType="text" android:maxLines="1" android:textSize="14sp" />
+
+    <Button android:id="@+id/addKnowledge" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="10dp" android:text="O'rgatish (qo'shish)"
+        android:textColor="@color/bg" android:backgroundTint="@color/accent" />
+
+    <TextView android:id="@+id/kCount" android:layout_width="wrap_content" android:layout_height="wrap_content"
+        android:layout_marginTop="16dp" android:textColor="@color/accent" android:textSize="15sp" android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView android:id="@+id/knowledgeList"
+        android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:layout_marginTop="8dp" />
+</LinearLayout>

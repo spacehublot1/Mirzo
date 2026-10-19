@@ -88,7 +88,8 @@ class MainActivity : AppCompatActivity() {
         } else {
             val names = brains.joinToString(", ") { it.displayName() }
             val lessons = Memory.lessonCount(this)
-            "Miyalar (${brains.size}): $names  •  o'rgangan qoidalar: $lessons"
+            val know = Knowledge.count(this)
+            "Miyalar (${brains.size}): $names  •  qoidalar: $lessons  •  bilim: $know"
         }
     }
 
@@ -109,7 +110,13 @@ class MainActivity : AppCompatActivity() {
         statusText.text = "Miyalar o'ylayapti..."
 
         lifecycleScope.launch {
-            val memory = Memory.buildContext(this@MainActivity)
+            // Xotira (suhbat + o'rganilgan qoidalar) + savolga mos bilim bazasi
+            val memory = buildString {
+                val mem = Memory.buildContext(this@MainActivity)
+                if (mem.isNotBlank()) append(mem).append("\n\n")
+                val know = Knowledge.retrieve(this@MainActivity, q)
+                if (know.isNotBlank()) append(know)
+            }.trim()
             val council = AiClient.council(this@MainActivity, q, memory)
 
             val senderLabel = buildString {
@@ -179,6 +186,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
+            R.id.action_teach -> { startActivity(Intent(this, TeachActivity::class.java)); return true }
             R.id.action_settings -> { startActivity(Intent(this, SettingsActivity::class.java)); return true }
             R.id.action_clear -> {
                 Memory.clear(this)

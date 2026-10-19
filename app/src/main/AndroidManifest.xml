@@ -26,5 +26,10 @@
             android:name=".SettingsActivity"
             android:exported="false"
             android:label="@string/settings_title" />
+
+        <activity
+            android:name=".TeachActivity"
+            android:exported="false"
+            android:label="O'qitish" />
     </application>
 </manifest>
